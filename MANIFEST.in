@@ -1,0 +1,5 @@
+graft src/admin_customizer/static
+graft src/admin_customizer/templates
+include README.rst
+include LICENSE
+include README
