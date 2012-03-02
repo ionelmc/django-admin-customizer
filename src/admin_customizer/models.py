@@ -13,25 +13,32 @@ from .managers import AvailableFieldManager
 
 class AdminSite(models.Model):
     slug = models.SlugField()
+    def __unicode__(self):
+        return u"admin:%s" % self.slug
 
 
 class RegisteredModel(models.Model):
     model = models.ForeignKey("contenttypes.ContentType")
+    admin_site = models.ForeignKey("AdminSite")
     list_display = models.ManyToManyField(
         "AvailableField",
-        related_name = "registeredmodels_with_list_display"
+        related_name = "registeredmodels_with_list_display",
+        blank = True,
     )
     list_filter = models.ManyToManyField(
         "AvailableField",
-        related_name = "registeredmodels_with_list_filter"
+        related_name = "registeredmodels_with_list_filter",
+        blank = True,
     )
     search_fields = models.ManyToManyField(
         "AvailableField",
-        related_name = "registeredmodels_with_search_fields"
+        related_name = "registeredmodels_with_search_fields",
+        blank = True,
     )
     raw_id_fields = models.ManyToManyField("AvailableField",
-        related_name = "registeredmodels_with_",
-        limit_choices_to = {'type__in': ('oto', 'fk', 'mtm')}
+        related_name = "+",
+        limit_choices_to = {'type__in': ('oto', 'fk', 'mtm')},
+        blank = True,
     )
 
 class AvailableField(models.Model):
@@ -65,13 +72,3 @@ class AvailableField(models.Model):
             '%s: %s' % (self.type, self.target) if self.target else self.type,
             ' | through: #%s' % self.through.id if self.through else ''
         )
-#class ReacheableField(models.Model):
-#    model = models.ForeignKey("contenttypes.ContentType", )
-#
-#    required_models = models.ManyToManyField("contenttypes.ContentType")
-#    path = models.TextField()
-#
-#class ReacheableField(models.Model):
-#    model = models.ForeignKey("contenttypes.ContentType")
-#    parent = models.ForeignKey("self")
-#    name = models.TextField()

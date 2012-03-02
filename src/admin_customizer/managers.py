@@ -54,5 +54,5 @@ class AvailableFieldManager(models.Manager):
     def filter_reachable_for_model(self, model):
         query = Q(model=model)
         for level in range(1, conf.ADMIN_CUSTOMIZER_MAX_FIELD_DEPTH + 1):
-            query |= Q(**{'reachable_through__'*level + 'model': model})
+            query |= Q(**{'through__'*level + 'model': model})
         return self.filter(query)

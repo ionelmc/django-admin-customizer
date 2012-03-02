@@ -1,0 +1,43 @@
+.field-selector-available, .field-selector-choosen {
+    display: inline-block;
+}
+.field-selector-available h2 {
+    background: white url(../admin/img/admin/nav-bg.gif) bottom left repeat-x;
+    color: #666;
+}
+.field-selector-available h2, .field-selector-choosen h2 {
+    border: 1px solid #ccc;
+    padding: 5px;
+}
+.field-selector-available select {
+    width: 150px;
+    margin-right: 10px;
+}
+.field-selector-choosen select {
+    width: 250px;
+}
+
+.field-selector-available select, .field-selector-choosen select {
+    margin-top: 0 !important;
+}
+.field-selector-available select:last-child {
+    margin-right: 0;
+}
+.field-selector-choosen {
+
+}
+.field-selector-choosen p, .field-selector-available p {
+    background: white;
+    border: 1px solid #ccc;
+    border-width: 0 1px;
+    padding: 3px;
+    color: #999;
+    font-size: 10px;
+    margin: 0 !important;
+    text-align: left;
+}
+.field-chooser {
+    display: inline-block;
+    margin: 0 !important;
+    padding-left: 10px !important;
+}
