@@ -11,68 +11,6 @@ from django.utils.importlib import import_module
 
 from .managers import AvailableFieldManager
 
-def update_available_fields(app, created_models, verbosity=2, **kwargs):
-    if isinstance(app, basestring):
-        app = import_module(app + '.models')
-    update_contenttypes(app, created_models, verbosity=verbosity, **kwargs)
-
-    available_fields = list(AvailableField.objects.filter(model__app_label=app.__name__.split('.')[-2]))
-    app_models = get_models(app)
-    if not app_models:
-        return
-    for klass in app_models:
-        opts = klass._meta
-        ct = ContentType.objects.get(app_label=opts.app_label,
-                                     model=opts.object_name.lower())
-        for field in opts.fields:
-            try:
-                af = AvailableField.objects.get_by_field(ct, field)
-                available_fields.remove(af)
-            except AvailableField.DoesNotExist:
-                af = AvailableField.objects.create_by_field(ct, field)
-                if verbosity >= 2:
-                    print "Adding %s" % af
-    if available_fields:
-        if kwargs.get('interactive', False):
-            display = '\n'.join(['    %s' % af for af in available_fields])
-            ok_to_delete = raw_input("""The following available fields do not exist anymore and need to be deleted:
-
-%s
-
-Any admins using this fields will be affected (they will be removed from them).
-
-    Type 'yes' to continue, or 'no' to cancel: """ % display)
-        else:
-            ok_to_delete = False
-
-        if ok_to_delete == 'yes':
-            for af in available_fields:
-                if verbosity >= 2:
-                    print "Deleting stale %s" % af
-                ct.delete()
-        else:
-            if verbosity >= 2:
-                print "Stale available fields remain."
-
-signals.post_syncdb.connect(update_available_fields)
-
-try:
-    from south.signals import post_migrate
-except ImportError:
-    pass
-else:
-    def south_update_available_fields(app, **kwargs):
-        interactive = False
-        frame = sys._getframe(1)
-        while frame:
-            if frame.f_code.co_name == 'migrate_app':
-                if 'interactive' in frame.f_locals:
-                    interactive = frame.f_locals['interactive']
-                    break
-            frame = frame.f_back
-        update_available_fields(app, (), interactive=interactive, **kwargs)
-    post_migrate.connect(south_update_available_fields)
-
 class AdminSite(models.Model):
     slug = models.SlugField()
 
@@ -97,21 +35,43 @@ class RegisteredModel(models.Model):
     )
 
 class AvailableField(models.Model):
-    model = models.ForeignKey("contenttypes.ContentType")
+    model = models.ForeignKey("contenttypes.ContentType", related_name="+")
     name = models.TextField()
+    RELATION_TYPES = ('fk', 'mtm', 'oto', 'rev')
     TYPES = (
         ('fk', _("Foreign key field")),
         ('mtm', _("Many to many field")),
         ('oto', _("One to one field")),
+        ('rev', _("One to many (reverse foreign key) field")),
+        #('span', _("Field from related model"))
         ('other', _("Other type of field"))
     )
     type = models.CharField(max_length=10, choices=TYPES)
+    target = models.ForeignKey(
+        "contenttypes.ContentType",
+        null = True,
+        blank = True,
+        related_name = "+"
+    )
+    through = models.ForeignKey("self", null=True, blank=True)
 
     objects = AvailableFieldManager()
 
-    def __str__(self):
-        return "AvailableField '%s | %s | %s'" % (
-            self.model,
+    def __unicode__(self):
+        return u"AvailableField #%s '%s | %s | %s%s'" % (
+            self.id,
+            self.model.model,
             self.name,
-            self.type
+            '%s: %s' % (self.type, self.target) if self.target else self.type,
+            ' | through: #%s' % self.through.id if self.through else ''
         )
+#class ReacheableField(models.Model):
+#    model = models.ForeignKey("contenttypes.ContentType", )
+#
+#    required_models = models.ManyToManyField("contenttypes.ContentType")
+#    path = models.TextField()
+#
+#class ReacheableField(models.Model):
+#    model = models.ForeignKey("contenttypes.ContentType")
+#    parent = models.ForeignKey("self")
+#    name = models.TextField()
