@@ -174,9 +174,9 @@
                     .text(gettext('Select your choice(s) and click '))
                     .append($('<img/>', {src: $settings.admin_media+'img/admin/selector-add.gif', alt: 'Add'}))
             )
-            .prepend('<h2>Chosen '+$settings.field_name+'</h2>');
-        container.prepend('<p> - no search -</p>');
-        container.prepend('<h2>Available '+$settings.field_name+'</h2>');
+            .prepend('<h2>' + gettext('Chosen') + ' '+$settings.field_name+'</h2>');
+        container.prepend('<p>' + gettext(' - no search -') + '</p>');
+        container.prepend('<h2>' + gettext('Available ')+$settings.field_name+'</h2>');
         $('<ul>', {'class': "selector-chooser field-chooser"})
             .append($('<li/>').append($('<a/>', {'class':"selector-add"}).text('Add').click(add_to_choosen)))
             .append($('<li/>').append($('<a/>', {'class':"selector-remove"}).text('Remove').click(remove_from_choosen)))
