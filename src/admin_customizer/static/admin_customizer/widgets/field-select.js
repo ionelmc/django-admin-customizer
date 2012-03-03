@@ -90,6 +90,9 @@
             if (current_level == level_count) {
                 new_select.attr('multiple', 'multiple');
             }
+            if (level_count == 1) {
+                new_select.css({width: '100%'});
+            }
             container.prepend(new_select)
             levels.push(new_select);
             if (current_level < level_count) {

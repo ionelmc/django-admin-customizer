@@ -14,7 +14,8 @@
     margin-right: 10px;
 }
 .field-selector-choosen select {
-    width: 250px;
+    width: 100%;
+    min-width: 250px;
 }
 
 .field-selector-available select, .field-selector-choosen select {
