@@ -8,7 +8,8 @@ Django admin customizing interface
 
     In development ...
 
-    Implementation plan:
+Implementation plan
+===================
 
     * models - done
     * generator for models (as management command) - done
@@ -19,8 +20,8 @@ Django admin customizing interface
     * actions configurator - pending
     *
 
-Features (current plan)
-=======================
+Planned features
+================
 
 * Multiple admin instances for the same model
 * Customization of:
