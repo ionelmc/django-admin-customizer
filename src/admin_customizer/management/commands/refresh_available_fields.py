@@ -7,19 +7,26 @@ from django.contrib.contenttypes.management import update_contenttypes
 from django.db.models import get_apps, get_models
 
 from admin_customizer.models import AvailableField
+from admin_customizer import conf
 
 def filter_by(list, **kwargs):
     ret = []
     for el in list:
         ok = True
-        for name, value in kwargs:
+        for name, value in kwargs.items():
             el_value = getattr(el, name)
-            if el_value in value if isinstance(value, (list, tuple)) else el_value != value :
+            if el_value != value :
                 ok = False
                 break
         if ok:
             ret.append(el)
     return ret
+
+def depth(af, current=1):
+    if not af.through or current > conf.ADMIN_CUSTOMIZER_MAX_FIELD_DEPTH:
+        return current
+    else:
+        return depth(af.through, current+1)
 
 class Command(NoArgsCommand):
     option_list = NoArgsCommand.option_list + (
@@ -67,13 +74,18 @@ class Command(NoArgsCommand):
             for af in list(current_available_fields):
                 #if af.type in AvailableField.RELATION_TYPES:
                 for raf in [i for i in current_available_fields if i.target == af.model]:
-                    naf, created = AvailableField.objects.get_or_create(
+                    if depth(raf) > conf.ADMIN_CUSTOMIZER_MAX_FIELD_DEPTH:
+                        continue
+                    args = dict(
                         name = af.name,
                         model = af.model,
                         type = af.type,
                         target = af.target,
                         through = raf
                     )
+                    if filter_by(current_available_fields, **args):
+                        continue
+                    naf, created = AvailableField.objects.get_or_create(**args)
                     if created:
                         if verbosity >= 2:
                             print "Adding %s" % af
@@ -81,7 +93,7 @@ class Command(NoArgsCommand):
                     else:
                         if af in available_fields:
                             available_fields.remove(af)
-                    current_available_fields.append(af)
+                    current_available_fields.append(naf)
 
         if available_fields:
             if interactive:
