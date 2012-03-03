@@ -1,3 +1,6 @@
+from logging import getLogger
+logger = getLogger(__name__)
+
 import sys
 
 from django.db import models
@@ -10,6 +13,7 @@ from django.utils.encoding import smart_unicode
 from django.utils.importlib import import_module
 
 from .managers import AvailableFieldManager
+from . import conf
 
 class AdminSite(models.Model):
     slug = models.SlugField()
@@ -78,3 +82,25 @@ class AvailableField(models.Model):
             '%s: %s' % (self.type, self.target) if self.target else self.type,
             'through: (%s)' % self.through if self.through else ''
         )
+    def path_for(self, model):
+        af = self
+        if not af.through:
+            return af.name
+        else:
+            label = [af.name]
+            level = 0
+            while af.through and level < conf.ADMIN_CUSTOMIZER_MAX_FIELD_DEPTH:
+                level += 1
+                af = af.through
+                label.append(af.name)
+
+            label = '__'.join(reversed(label))
+            if af.model != model:
+                logger.error("Failed to generate path for %s relative to %s. Result was %s.%s (%s)", self, model, af.model, label, af)
+            #    return u"!!! %s.%s -- %s" % (
+            #        af.model,
+            #        label,
+            #        af
+            #    )
+            #else:
+            return label

@@ -46,7 +46,6 @@ def registered_model_form_factory(model):
         return AddRegisteredModelForm
 
 class RegisteredModelAdmin(admin.ModelAdmin):
-    #filter_horizontal = 'list_display', 'list_filter', 'search_fields', 'raw_id_fields'
     def get_fieldsets(self, request, obj=None):
         if obj:
             return (

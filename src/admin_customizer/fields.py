@@ -32,22 +32,4 @@ class FieldSelectField(ModelMultipleChoiceField):
     choices = property(_get_choices, ChoiceField._set_choices)
 
     def label_from_instance(self, af):
-        if not af.through:
-            return af.name
-        else:
-            label = [af.name]
-            level = 0
-            while af.through and level < conf.ADMIN_CUSTOMIZER_MAX_FIELD_DEPTH:
-                level += 1
-                af = af.through
-                label.append(af.name)
-
-            label = '__'.join(reversed(label))
-            if af.model != self.relative_to:
-                return u"!!! %s.%s -- %s" % (
-                    af.model,
-                    label,
-                    af
-                )
-            else:
-                return label
+        return af.path_for(self.relative_to)
