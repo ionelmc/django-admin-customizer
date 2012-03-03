@@ -118,18 +118,18 @@
                                     update_select(choosen_select, choosen_select, [data], true, true);
                                 }
                                 if (!is_available(data, choosen_select)) {
-                                    el.remove()
+                                    el.remove();
                                 }
                             });
                         }
                     } else {
-                        var el = $(this),
+                        var el = $(this).find(':selected'),
                             data = cache.all[el.val()];
                         if (data) {
                             update_select(choosen_select, choosen_select, [data], true, true);
                         }
                         if (!is_available(data, choosen_select)) {
-                            el.remove()
+                            el.remove();
                         }
                     }
                 })
