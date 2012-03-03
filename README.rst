@@ -14,11 +14,12 @@ Implementation plan
     * models - done
     * generator for models (as management command) - done
     * configration ui - done
+    * pull model methods and reverse related descriptors in the list of fields - pending
     * sorting fields in configuration ui - pending
     * modeladmin factory - pending
     * dynamic url dispatch to managed modeladmins - pending
     * actions configurator - pending
-    *
+    * base admin class support - pending
 
 Planned features
 ================
