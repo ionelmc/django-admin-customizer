@@ -2,37 +2,51 @@ from django import forms
 from django.contrib import admin
 from django.contrib.admin.options import flatten_fieldsets
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.contenttypes.models import ContentType
 
 from .models import AdminSite, AvailableField, RegisteredModel
 from .widgets import FieldSelect
-from .fields import FieldSelectField
+from .fields import FieldSelectField, ContentTypeChoiceField
 
 admin.site.register((AdminSite, AvailableField))
 
 def registered_model_form_factory(model):
-    class RegisteredModelForm(forms.ModelForm):
-        class Meta:
-            model = RegisteredModel
+    if model:
+        class EditRegisteredModelForm(forms.ModelForm):
+            class Meta:
+                model = RegisteredModel
 
-        list_display = FieldSelectField(
-            _('Fields for "list_display" (changelist columns)'),
-            AvailableField.objects.filter(model=model),
-        )
-        list_filter = FieldSelectField(
-            _('Fields for "list_filter" (changelist filters)'),
-            AvailableField.objects.filter_reachable_for_model(model),
-        )
-        search_fields = FieldSelectField(
-            _('Fields for "search_fields" (changelist search)'),
-            AvailableField.objects.filter_reachable_for_model(model),
-        )
-        raw_id_fields = FieldSelectField(
-            _('Fields for "raw_id_fields" (id-editable in changelist/edit/add)'),
-            AvailableField.objects.filter(model=model, type__in=('fk', 'mtm')),
-        )
-    return RegisteredModelForm
+            list_display = FieldSelectField(
+                _('"list_display" (changelist columns)'),
+                model,
+                AvailableField.objects.filter_for_model(model=model),
+            )
+            list_filter = FieldSelectField(
+                _('"list_filter" (changelist filters)'),
+                model,
+                AvailableField.objects.filter_reachable_for_model(model),
+            )
+            search_fields = FieldSelectField(
+                _('"search_fields" (changelist search)'),
+                model,
+                AvailableField.objects.filter_reachable_for_model(model),
+            )
+            raw_id_fields = FieldSelectField(
+                _('"raw_id_fields" (id-editable in changelist/edit/add)'),
+                model,
+                AvailableField.objects.filter_for_model(model, type__in=('fk', 'mtm')),
+            )
+        return EditRegisteredModelForm
+    else:
+        class AddRegisteredModelForm(forms.ModelForm):
+            class Meta:
+                model = RegisteredModel
+
+            model = ContentTypeChoiceField(ContentType.objects.order_by('app_label', 'model'))
+        return AddRegisteredModelForm
 
 class RegisteredModelAdmin(admin.ModelAdmin):
+    #filter_horizontal = 'list_display', 'list_filter', 'search_fields', 'raw_id_fields'
     def get_fieldsets(self, request, obj=None):
         if obj:
             return (
@@ -61,8 +75,7 @@ class RegisteredModelAdmin(admin.ModelAdmin):
             return set(flatten_fieldsets(self.get_fieldsets(request, obj))) - set(('model', 'admin_site'))
 
     def get_form(self, request, obj=None, **kwargs):
-        if obj:
-            kwargs['form'] = registered_model_form_factory(obj.model)
+        kwargs['form'] = registered_model_form_factory(obj and obj.model)
         return super(RegisteredModelAdmin, self).get_form(request, obj=obj, **kwargs)
 
 admin.site.register(RegisteredModel, RegisteredModelAdmin)

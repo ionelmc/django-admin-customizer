@@ -3,6 +3,7 @@
     var $settings = {
         field_name: 'Object',
         max_levels: 3,
+        add_parents: true
     };
     if (settings) {
         $.extend($settings, settings);
@@ -106,19 +107,30 @@
                 })(new_select, current_level);
             }
             (function (select, current_level) {
-                select.dblclick(function() {
-                    var level_to_add = current_level - 1;
-                    while (level_to_add>=0) {
-                        levels[level_to_add--].find(':selected').each(function() {
-                            var el = $(this),
-                                data = cache.all[el.val()];
-                            if (data) {
-                                update_select(choosen_select, choosen_select, [data], true, true);
-                            }
-                            if (!is_available(data, choosen_select)) {
-                                el.remove()
-                            }
-                        });
+                select.dblclick(function(e) {
+                    if ($settings.add_parents) {
+                        var level_to_add = current_level - 1;
+                        while (level_to_add>=0) {
+                            levels[level_to_add--].find(':selected').each(function() {
+                                var el = $(this),
+                                    data = cache.all[el.val()];
+                                if (data) {
+                                    update_select(choosen_select, choosen_select, [data], true, true);
+                                }
+                                if (!is_available(data, choosen_select)) {
+                                    el.remove()
+                                }
+                            });
+                        }
+                    } else {
+                        var el = $(this),
+                            data = cache.all[el.val()];
+                        if (data) {
+                            update_select(choosen_select, choosen_select, [data], true, true);
+                        }
+                        if (!is_available(data, choosen_select)) {
+                            el.remove()
+                        }
                     }
                 })
             })(new_select, current_level);

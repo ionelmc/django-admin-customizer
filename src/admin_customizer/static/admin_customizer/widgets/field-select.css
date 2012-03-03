@@ -2,7 +2,7 @@
     display: inline-block;
 }
 .field-selector-available h2 {
-    background: white url(../admin/img/admin/nav-bg.gif) bottom left repeat-x;
+    background: white url(../../admin/img/admin/nav-bg.gif) bottom left repeat-x;
     color: #666;
 }
 .field-selector-available h2, .field-selector-choosen h2 {

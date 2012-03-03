@@ -1,5 +1,12 @@
-from django.forms.models import ModelMultipleChoiceField, ModelChoiceIterator, ChoiceField
+from django.forms.models import ModelMultipleChoiceField, ModelChoiceIterator
+from django.forms.models import ChoiceField, ModelChoiceField
+
 from .widgets import FieldSelect
+from . import conf
+
+class ContentTypeChoiceField(ModelChoiceField):
+    def label_from_instance(self, cc):
+        return "%s.%s" % (cc.app_label, cc.model)
 
 class FieldSelectChoice(object):
     # we use this instead of collections.namedtuple because django typechecks
@@ -13,8 +20,9 @@ class FieldSelectChoiceIterator(ModelChoiceIterator):
 
 class FieldSelectField(ModelMultipleChoiceField):
 
-    def __init__(self, verbose_name, queryset, **kwargs):
+    def __init__(self, verbose_name, relative_to, queryset, **kwargs):
         self.widget = FieldSelect(verbose_name)
+        self.relative_to = relative_to
         super(FieldSelectField, self).__init__(queryset, **kwargs)
 
     def _get_choices(self):
@@ -22,3 +30,24 @@ class FieldSelectField(ModelMultipleChoiceField):
             return self._choices
         return FieldSelectChoiceIterator(self)
     choices = property(_get_choices, ChoiceField._set_choices)
+
+    def label_from_instance(self, af):
+        if not af.through:
+            return af.name
+        else:
+            label = [af.name]
+            level = 0
+            while af.through and level < conf.ADMIN_CUSTOMIZER_MAX_FIELD_DEPTH:
+                level += 1
+                af = af.through
+                label.append(af.name)
+
+            label = '__'.join(reversed(label))
+            if af.model != self.relative_to:
+                return u"!!! %s.%s -- %s" % (
+                    af.model,
+                    label,
+                    af
+                )
+            else:
+                return label

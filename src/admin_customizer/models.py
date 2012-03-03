@@ -41,6 +41,12 @@ class RegisteredModel(models.Model):
         blank = True,
     )
 
+    def __unicode__(self):
+        if self.model:
+            return u"RegisteredModel: %s.%s" % (self.model.app_label, self.model.model)
+        else:
+            return u"RegisteredModel: blank"
+
 class AvailableField(models.Model):
     model = models.ForeignKey("contenttypes.ContentType", related_name="+")
     name = models.TextField()
@@ -65,10 +71,10 @@ class AvailableField(models.Model):
     objects = AvailableFieldManager()
 
     def __unicode__(self):
-        return u"AvailableField #%s '%s | %s | %s%s'" % (
+        return u"AvailableField #%s %s.%s (%s) %s" % (
             self.id,
             self.model.model,
             self.name,
             '%s: %s' % (self.type, self.target) if self.target else self.type,
-            ' | through: #%s' % self.through.id if self.through else ''
+            'through: (%s)' % self.through if self.through else ''
         )
