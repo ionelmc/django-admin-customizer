@@ -1,5 +1,6 @@
 from optparse import make_option
 import inspect
+import sys
 
 from django.core.management.base import NoArgsCommand
 from django.db import connections, router, transaction, models, DEFAULT_DB_ALIAS
@@ -90,6 +91,7 @@ def get_or_create(stale_list, cache_list, verbosity, **kwargs):
     else:
         if af in stale_list:
             stale_list.remove(af)
+    return created
 
 class Command(NoArgsCommand):
     option_list = NoArgsCommand.option_list + (
@@ -114,7 +116,6 @@ class Command(NoArgsCommand):
         ))
         all_fields = stale_fields.copy()
 
-        current_available_fields = []
         for app in get_apps():
             if isinstance(app, basestring):
                 app = import_module(app + '.models')
@@ -143,9 +144,7 @@ class Command(NoArgsCommand):
 
                         argspec = inspect.getargspec(member)
                         defaults = len(argspec.defaults) if argspec.defaults else 0
-                        if len(argspec.args) - defaults == 1 and \
-                            not (member_name.startswith('__') or
-                                 member_name.endswith('__')):
+                        if len(argspec.args) - defaults == 1 and not member_name.startswith('_'):
                             get_or_create(stale_fields, all_fields, verbosity,
                                 name = member_name,
                                 model = ct,
@@ -153,21 +152,31 @@ class Command(NoArgsCommand):
                                 target = None,
                                 through = None,
                             )
-
         dirty = True
         while dirty:
             dirty = False
-            for af in all_fields.copy():
-                for raf in [i for i in current_available_fields if i.target == af.model]:
+            current_fields = all_fields.copy()
+            for c, af in enumerate(current_fields):
+                if c % 10 == 0:
+                    print "\rChecking spanning AFs, %s/%s +%s" % (
+                        c,
+                        len(current_fields),
+                        len(all_fields) - len(current_fields)
+                    ),
+                    sys.stdout.flush()
+                for raf in filter_by(all_fields, target=af.model):
                     if depth(raf) > conf.ADMIN_CUSTOMIZER_MAX_FIELD_DEPTH:
                         continue
-                    get_or_create(stale_fields, all_fields, verbosity,
+                    if get_or_create(stale_fields, all_fields, verbosity,
                         name = af.name,
                         model = af.model,
                         type = af.type,
                         target = af.target,
                         through = raf
-                    )
+                    ):
+                        dirty = True
+            print
+
 
         prompt_delete_stale(stale_fields, interactive, verbosity)
 
