@@ -1,10 +1,13 @@
 from optparse import make_option
+import inspect
+
 from django.core.management.base import NoArgsCommand
 from django.db import connections, router, transaction, models, DEFAULT_DB_ALIAS
 from django.utils.importlib import import_module
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.management import update_contenttypes
 from django.db.models import get_apps, get_models
+from django.db.models.fields.related import RelatedField
 
 from admin_customizer.models import AvailableField
 from admin_customizer import conf
@@ -28,6 +31,66 @@ def depth(af, current=1):
     else:
         return depth(af.through, current+1)
 
+def get_type_for(field):
+    if isinstance(field, models.ForeignKey):
+        return 'fk'
+    elif isinstance(field, models.ManyToManyField):
+        return 'mtm'
+    elif isinstance(field, models.OneToOneField):
+        return 'oto'
+    else:
+        return 'other'
+
+def get_target_for(field):
+    if isinstance(field, RelatedField):
+        model = field.rel.to
+        if issubclass(model, models.Model):
+            return ContentType.objects.get_for_model(model)
+        elif isinstance(model, ContentType):
+            return model
+        else:
+            raise RuntimeError("Unknown model %s." % model)
+    else:
+        return None
+
+def prompt_delete_stale(available_fields, interactive, verbosity):
+    if available_fields:
+        if interactive:
+            display = '\n'.join(['    %s' % af for af in available_fields])
+            ok_to_delete = raw_input("""The following available fields do not exist anymore and need to be deleted:
+
+%s
+
+Any admins using this fields will be affected (they will be removed from them).
+
+Type 'yes' to continue, or 'no' to cancel: """ % display)
+        else:
+            ok_to_delete = False
+
+        if ok_to_delete == 'yes':
+            for af in available_fields:
+                if verbosity >= 2:
+                    print "Deleting stale %s" % af
+                af.delete()
+        else:
+            if verbosity >= 2:
+                print "Stale available fields remain."
+
+def get_or_create(stale_list, cache_list, verbosity, **kwargs):
+    afs = filter_by(cache_list, **kwargs)
+    if afs:
+        af, = afs
+        created = False
+    else:
+        af, created = AvailableField.objects.get_or_create(**kwargs)
+    if created:
+        if verbosity >= 2:
+            print "Adding %s" % af
+        cache_list.add(af)
+    else:
+        if af in stale_list:
+            stale_list.remove(af)
+
 class Command(NoArgsCommand):
     option_list = NoArgsCommand.option_list + (
         make_option('--noinput', action='store_false', dest='interactive', default=True,
@@ -44,8 +107,12 @@ class Command(NoArgsCommand):
         interactive = options.get('interactive')
         show_traceback = options.get('traceback', False)
 
-        AvailableField.objects.all().delete()
-        available_fields = list(AvailableField.objects.all())
+        stale_fields = set(AvailableField.objects.select_related(
+            'model',
+            'target',
+            'through__' * conf.ADMIN_CUSTOMIZER_MAX_FIELD_DEPTH
+        ))
+        all_fields = stale_fields.copy()
 
         current_available_fields = []
         for app in get_apps():
@@ -59,63 +126,49 @@ class Command(NoArgsCommand):
                 opts = klass._meta
                 ct = ContentType.objects.get(app_label=opts.app_label,
                                              model=opts.object_name.lower())
-                for field in opts.fields:
-                    af, created = AvailableField.objects.get_or_create_by_field(ct, field)
-                    if created:
-                        if verbosity >= 2:
-                            print "Adding %s" % af
-                    else:
-                        available_fields.remove(af)
-                    current_available_fields.append(af)
+                for field_name in opts.get_all_field_names():
+                    field, model, direct, mtm = opts.get_field_by_name(field_name)
+                    get_or_create(stale_fields, all_fields, verbosity,
+                        name = field.name,
+                        type = get_type_for(field),
+                        target = get_target_for(field),
+                        model = ct,
+                        through = None,
+                    )
+                for member_name, member in inspect.getmembers(klass):
+                    if inspect.ismethod(member) and member_name not in (
+                            '_get_pk_val', '_get_unique_checks', 'clean',
+                            'clean_fields', 'delete', 'full_clean', 'save',
+                            'save_base', 'validate_unique'):
+
+                        argspec = inspect.getargspec(member)
+                        defaults = len(argspec.defaults) if argspec.defaults else 0
+                        if len(argspec.args) - defaults == 1 and \
+                            not (member_name.startswith('__') or
+                                 member_name.endswith('__')):
+                            get_or_create(stale_fields, all_fields, verbosity,
+                                name = member_name,
+                                model = ct,
+                                type = "meth",
+                                target = None,
+                                through = None,
+                            )
 
         dirty = True
         while dirty:
             dirty = False
-            for af in list(current_available_fields):
-                #if af.type in AvailableField.RELATION_TYPES:
+            for af in all_fields.copy():
                 for raf in [i for i in current_available_fields if i.target == af.model]:
                     if depth(raf) > conf.ADMIN_CUSTOMIZER_MAX_FIELD_DEPTH:
                         continue
-                    args = dict(
+                    get_or_create(stale_fields, all_fields, verbosity,
                         name = af.name,
                         model = af.model,
                         type = af.type,
                         target = af.target,
                         through = raf
                     )
-                    if filter_by(current_available_fields, **args):
-                        continue
-                    naf, created = AvailableField.objects.get_or_create(**args)
-                    if created:
-                        if verbosity >= 2:
-                            print "Adding %s" % af
-                        dirty = True
-                    else:
-                        if af in available_fields:
-                            available_fields.remove(af)
-                    current_available_fields.append(naf)
 
-        if available_fields:
-            if interactive:
-                display = '\n'.join(['    %s' % af for af in available_fields])
-                ok_to_delete = raw_input("""The following available fields do not exist anymore and need to be deleted:
+        prompt_delete_stale(stale_fields, interactive, verbosity)
 
-%s
-
-Any admins using this fields will be affected (they will be removed from them).
-
-Type 'yes' to continue, or 'no' to cancel: """ % display)
-            else:
-                ok_to_delete = False
-
-            if ok_to_delete == 'yes':
-                for af in available_fields:
-                    if verbosity >= 2:
-                        print "Deleting stale %s" % af
-                    ct.delete()
-            else:
-                if verbosity >= 2:
-                    print "Stale available fields remain."
-
-        for i in list(AvailableField.objects.all()):
-            print i
+        print "Total field combinations:", AvailableField.objects.count()

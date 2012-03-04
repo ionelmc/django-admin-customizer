@@ -14,7 +14,7 @@ Implementation plan
     * models - done
     * generator for models (as management command) - done
     * configration ui - done
-    * pull model methods and reverse related descriptors in the list of fields - pending
+    * pull model methods and reverse related descriptors in the list of fields - done
     * sorting fields in configuration ui - pending
     * modeladmin factory - pending
     * dynamic url dispatch to managed modeladmins - pending
