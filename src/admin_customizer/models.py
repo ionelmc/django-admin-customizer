@@ -22,6 +22,8 @@ class AdminSite(models.Model):
 
 
 class RegisteredModel(models.Model):
+    class Meta:
+        unique_together = 'model', 'admin_site'
     model = models.ForeignKey("contenttypes.ContentType")
     admin_site = models.ForeignKey("AdminSite")
     list_display = models.ManyToManyField(
@@ -54,12 +56,16 @@ class RegisteredModel(models.Model):
 class AvailableField(models.Model):
     model = models.ForeignKey("contenttypes.ContentType", related_name="+")
     name = models.TextField()
-    RELATION_TYPES = ('fk', 'mtm', 'oto', 'rev')
+    LIST_DISPLAY_TYPES = ('fk', 'mtm', 'oto', 'rev', 'meth', 'other')
+    LIST_FILTER_TYPES = ('fk', 'mtm', 'oto', 'rev', 'other')
+    RAW_ID_FIELDS_TYPES = ('fk', 'mtm')
+    SEARCH_FIELDS_TYPES = ('fk', 'mtm', 'oto', 'rev', 'other')
     TYPES = (
         ('fk', _("Foreign key field")),
         ('mtm', _("Many to many field")),
         ('oto', _("One to one field")),
         ('rev', _("One to many (reverse foreign key) field")),
+        ('meth', _("Model method")),
         #('span', _("Field from related model"))
         ('other', _("Other type of field"))
     )
@@ -79,9 +85,22 @@ class AvailableField(models.Model):
             self.id,
             self.model.model,
             self.name,
-            '%s: %s' % (self.type, self.target) if self.target else self.type,
+            '%s: %s' % (self.type, self.target.model) if self.target else self.type,
             'through: (%s)' % self.through if self.through else ''
         )
+
+    def __str__(self):
+        return "AF%s %s.%s (%s) %s" % (
+            self.id,
+            self.model.model,
+            self.name,
+            '%s: %s' % (self.type, self.target.model) if self.target else self.type,
+            'through: (%s)' % self.through if self.through else ''
+        )
+
+    def __repr__(self):
+        return "<%s>" % self.__str__()
+
     def path_for(self, model):
         af = self
         if not af.through:
@@ -104,3 +123,13 @@ class AvailableField(models.Model):
             #    )
             #else:
             return label
+    def XXX_simple(self, *a):
+        pass
+
+    @staticmethod
+    def XXX_static():
+        pass
+
+    @classmethod
+    def XXX_class(cls, asdf=123):
+        pass

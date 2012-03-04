@@ -19,22 +19,31 @@ def registered_model_form_factory(model):
             list_display = FieldSelectField(
                 _('"list_display" (changelist columns)'),
                 model,
-                AvailableField.objects.filter_for_model(model=model),
+                AvailableField.objects.filter_for_model(model=model).filter(
+                    type__in = AvailableField.LIST_DISPLAY_TYPES
+                ),
             )
             list_filter = FieldSelectField(
                 _('"list_filter" (changelist filters)'),
                 model,
-                AvailableField.objects.filter_reachable_for_model(model),
+                AvailableField.objects.filter_reachable_for_model(model).filter(
+                    type__in = AvailableField.LIST_FILTER_TYPES
+                ),
             )
             search_fields = FieldSelectField(
                 _('"search_fields" (changelist search)'),
                 model,
-                AvailableField.objects.filter_reachable_for_model(model),
+                AvailableField.objects.filter_reachable_for_model(model).filter(
+                    type__in = AvailableField.SEARCH_FIELDS_TYPES
+                ),
             )
             raw_id_fields = FieldSelectField(
                 _('"raw_id_fields" (id-editable in changelist/edit/add)'),
                 model,
-                AvailableField.objects.filter_for_model(model, type__in=('fk', 'mtm')),
+                AvailableField.objects.filter_for_model(
+                    model,
+                    type__in = AvailableField.RAW_ID_FIELDS_TYPES
+                ),
             )
         return EditRegisteredModelForm
     else:
