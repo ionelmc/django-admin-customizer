@@ -24,6 +24,7 @@ class AdminSite(models.Model):
 class RegisteredModel(models.Model):
     class Meta:
         unique_together = 'model', 'admin_site'
+
     model = models.ForeignKey("contenttypes.ContentType")
     admin_site = models.ForeignKey("AdminSite")
     list_display = models.ManyToManyField(
@@ -54,6 +55,9 @@ class RegisteredModel(models.Model):
             return u"RegisteredModel: blank"
 
 class AvailableField(models.Model):
+    class Meta:
+        unique_together = 'model', 'name', 'type', 'target', 'through'
+
     model = models.ForeignKey("contenttypes.ContentType", related_name="+")
     name = models.TextField()
     LIST_DISPLAY_TYPES = ('fk', 'mtm', 'oto', 'rev', 'meth', 'other')
