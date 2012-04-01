@@ -6,7 +6,7 @@ urlpatterns = patterns("admin_customizer.views",
     url('^$', 'admin_index'),
 )
 for site in AdminSite.objects.all():
-    admin_site = DjangoAdminSite(app_name=site.slug)
+    admin_site = DjangoAdminSite(name=site.slug, app_name=site.slug)
     for registered_model in site.models.all():
         ct = registered_model.model
         DynamicModelAdmin = type(
