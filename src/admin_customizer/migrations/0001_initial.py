@@ -19,8 +19,15 @@ class Migration(SchemaMigration):
         db.create_table('admin_customizer_registeredmodel', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('model', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['contenttypes.ContentType'])),
+            ('admin_site', self.gf('django.db.models.fields.related.ForeignKey')(related_name='models', to=orm['admin_customizer.AdminSite'])),
+            ('active', self.gf('django.db.models.fields.BooleanField')(default=False)),
+            ('created', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
+            ('modified', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
         ))
         db.send_create_signal('admin_customizer', ['RegisteredModel'])
+
+        # Adding unique constraint on 'RegisteredModel', fields ['model', 'admin_site']
+        db.create_unique('admin_customizer_registeredmodel', ['model_id', 'admin_site_id'])
 
         # Adding M2M table for field list_display on 'RegisteredModel'
         db.create_table('admin_customizer_registeredmodel_list_display', (
@@ -65,9 +72,18 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal('admin_customizer', ['AvailableField'])
 
+        # Adding unique constraint on 'AvailableField', fields ['model', 'name', 'type', 'target', 'through']
+        db.create_unique('admin_customizer_availablefield', ['model_id', 'name', 'type', 'target_id', 'through_id'])
+
 
     def backwards(self, orm):
         
+        # Removing unique constraint on 'AvailableField', fields ['model', 'name', 'type', 'target', 'through']
+        db.delete_unique('admin_customizer_availablefield', ['model_id', 'name', 'type', 'target_id', 'through_id'])
+
+        # Removing unique constraint on 'RegisteredModel', fields ['model', 'admin_site']
+        db.delete_unique('admin_customizer_registeredmodel', ['model_id', 'admin_site_id'])
+
         # Deleting model 'AdminSite'
         db.delete_table('admin_customizer_adminsite')
 
@@ -97,7 +113,7 @@ class Migration(SchemaMigration):
             'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'db_index': 'True'})
         },
         'admin_customizer.availablefield': {
-            'Meta': {'object_name': 'AvailableField'},
+            'Meta': {'unique_together': "(('model', 'name', 'type', 'target', 'through'),)", 'object_name': 'AvailableField'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'model': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'+'", 'to': "orm['contenttypes.ContentType']"}),
             'name': ('django.db.models.fields.TextField', [], {}),
@@ -106,13 +122,17 @@ class Migration(SchemaMigration):
             'type': ('django.db.models.fields.CharField', [], {'max_length': '10'})
         },
         'admin_customizer.registeredmodel': {
-            'Meta': {'object_name': 'RegisteredModel'},
+            'Meta': {'unique_together': "(('model', 'admin_site'),)", 'object_name': 'RegisteredModel'},
+            'active': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'admin_site': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'models'", 'to': "orm['admin_customizer.AdminSite']"}),
+            'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'list_display': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'registeredmodels_with_list_display'", 'symmetrical': 'False', 'to': "orm['admin_customizer.AvailableField']"}),
-            'list_filter': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'registeredmodels_with_list_filter'", 'symmetrical': 'False', 'to': "orm['admin_customizer.AvailableField']"}),
+            'list_display': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "'registeredmodels_with_list_display'", 'blank': 'True', 'to': "orm['admin_customizer.AvailableField']"}),
+            'list_filter': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "'registeredmodels_with_list_filter'", 'blank': 'True', 'to': "orm['admin_customizer.AvailableField']"}),
             'model': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
-            'raw_id_fields': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'registeredmodels_with_'", 'symmetrical': 'False', 'to': "orm['admin_customizer.AvailableField']"}),
-            'search_fields': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'registeredmodels_with_search_fields'", 'symmetrical': 'False', 'to': "orm['admin_customizer.AvailableField']"})
+            'modified': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
+            'raw_id_fields': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "'+'", 'blank': 'True', 'to': "orm['admin_customizer.AvailableField']"}),
+            'search_fields': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "'registeredmodels_with_search_fields'", 'blank': 'True', 'to': "orm['admin_customizer.AvailableField']"})
         },
         'contenttypes.contenttype': {
             'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
