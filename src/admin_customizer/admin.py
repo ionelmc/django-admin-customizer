@@ -8,7 +8,7 @@ from .models import AdminSite, AvailableField, RegisteredModel
 from .widgets import FieldSelect
 from .fields import FieldSelectField, ContentTypeChoiceField
 
-admin.site.register((AdminSite, AvailableField))
+admin.site.register(AdminSite)
 
 def registered_model_form_factory(model):
     if model:
@@ -87,3 +87,13 @@ class RegisteredModelAdmin(admin.ModelAdmin):
         return super(RegisteredModelAdmin, self).get_form(request, obj=obj, **kwargs)
 
 admin.site.register(RegisteredModel, RegisteredModelAdmin)
+
+class AvailableFieldAdmin(admin.ModelAdmin):
+    list_display = 'name', 'model', 'type', 'target', 'through_display'
+
+    def through_display(self, obj):
+        return "AF:%s" % obj.through_id
+    through_display.short_description = "Through"
+    through_display.admin_order_field = "through"
+
+admin.site.register(AvailableField, AvailableFieldAdmin)
