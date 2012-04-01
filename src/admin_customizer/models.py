@@ -18,7 +18,10 @@ from . import conf
 class AdminSite(models.Model):
     slug = models.SlugField()
     def __unicode__(self):
-        return u"admin:%s" % self.slug
+        if hasattr(self, 'unicode_display'):
+            return self.unicode_display
+        self.unicode_display = "%s%s/" % (reverse('admin_customizer-admin_index'), self.slug)
+        return self.unicode_display
 
 
 class RegisteredModel(models.Model):

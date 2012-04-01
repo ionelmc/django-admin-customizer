@@ -60,7 +60,8 @@ def registered_model_form_factory(model):
         return AddRegisteredModelForm
 
 class RegisteredModelAdmin(admin.ModelAdmin):
-    list_display = list_filter = "model", "admin_site", "active"
+    list_display = "model", "admin_site_display", "active"
+    list_filter = "model", "admin_site", "active"
 
     def get_fieldsets(self, request, obj=None):
         if obj:
@@ -82,6 +83,12 @@ class RegisteredModelAdmin(admin.ModelAdmin):
                     'fields': ('model', 'admin_site')
                 }),
             )
+    def admin_site_display(self, obj):
+        return '<a href="%(url)s">%(url)s</a>' % dict(
+            url = unicode(obj.admin_site)
+        )
+    admin_site_display.allow_tags = True
+    admin_site_display.short_description = _("Admin site")
 
     def get_readonly_fields(self, request, obj=None):
         if obj:
