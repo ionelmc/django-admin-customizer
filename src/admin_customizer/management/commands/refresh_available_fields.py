@@ -100,6 +100,9 @@ class Command(NoArgsCommand):
         make_option('--database', action='store', dest='database',
             default=DEFAULT_DB_ALIAS, help='Nominates a database to use. '
                 'Defaults to the "default" database.'),
+        make_option('--erase', action='store_true', dest='erase',
+            default=False, help='Removes all the AvailableFields. WARNING: This'
+            ' will discard your selections in the RegisteredModel instances !'),
     )
     help = "Create the database tables for all apps in INSTALLED_APPS whose tables haven't already been created."
 
@@ -108,6 +111,9 @@ class Command(NoArgsCommand):
         verbosity = int(options.get('verbosity', 1))
         interactive = options.get('interactive')
         show_traceback = options.get('traceback', False)
+
+        if options.get('erase'):
+            print "Deleted %s available fields." % AvailableField.objects.all().delete()
 
         stale_fields = set(AvailableField.objects.select_related(
             'model',
