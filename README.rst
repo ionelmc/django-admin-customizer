@@ -4,7 +4,7 @@
 
 Django admin customizing interface
 
-.. note::
+**Note:**
 
     In development ...
 
@@ -68,7 +68,7 @@ after each model change with::
 
     manage.py refresh_available_fields
 
-.. note::
+**Note:**
 
     If you delete models the registered admins will be deleted for them.
 
@@ -99,7 +99,7 @@ To enable urlpattern reloading add
 ``'admin_customizer.middleware.URLResolverReloadMiddleware'`` to
 ``MIDDLEWARE_CLASSES``.
 
-.. warning::
+**Warning!**
 
     You must have working django cache for this to work properly ! See django's
     `cache documentation
