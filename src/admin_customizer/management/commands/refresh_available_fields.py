@@ -1,3 +1,6 @@
+from logging import getLogger
+logger = getLogger(__name__)
+
 from optparse import make_option
 import inspect
 import sys
@@ -8,7 +11,7 @@ from django.utils.importlib import import_module
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.management import update_contenttypes
 from django.db.models import get_apps, get_models
-from django.db.models.fields.related import RelatedField
+from django.db.models.fields.related import RelatedField, RelatedObject
 
 from admin_customizer.models import AvailableField
 from admin_customizer import conf
@@ -32,6 +35,15 @@ def depth(af, current=1):
     else:
         return depth(af.through, current+1)
 
+def get_name_for(field, name):
+    if isinstance(field, (models.ForeignKey,
+                          models.ManyToManyField,
+                          models.OneToOneField)):
+        return name
+    elif isinstance(field, RelatedObject):
+        return field.get_accessor_name()
+    else:
+        return name
 def get_type_for(field):
     if isinstance(field, models.ForeignKey):
         return 'fk'
@@ -39,6 +51,8 @@ def get_type_for(field):
         return 'mtm'
     elif isinstance(field, models.OneToOneField):
         return 'oto'
+    elif isinstance(field, RelatedObject):
+        return 'mtm'
     else:
         return 'other'
 
@@ -91,6 +105,8 @@ def get_or_create(stale_list, cache_list, verbosity, **kwargs):
     else:
         if af in stale_list:
             stale_list.remove(af)
+    if created:
+        logger.debug("Created %s.", str(af))
     return created
 
 class Command(NoArgsCommand):
@@ -135,8 +151,9 @@ class Command(NoArgsCommand):
                                              model=opts.object_name.lower())
                 for field_name in opts.get_all_field_names():
                     field, model, direct, mtm = opts.get_field_by_name(field_name)
+                    print field_name, field.name, type(field), field
                     get_or_create(stale_fields, all_fields, verbosity,
-                        name = field.name,
+                        name = get_name_for(field, field_name),
                         type = get_type_for(field),
                         target = get_target_for(field),
                         model = ct,
