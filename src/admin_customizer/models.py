@@ -47,6 +47,7 @@ class RegisteredModel(models.Model):
         limit_choices_to = {'type__in': ('oto', 'fk', 'mtm')},
         blank = True,
     )
+    active = models.BooleanField(default=False)
 
     def __unicode__(self):
         if self.model:

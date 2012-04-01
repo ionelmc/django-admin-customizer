@@ -7,7 +7,7 @@ urlpatterns = patterns("admin_customizer.views",
 )
 for site in AdminSite.objects.all():
     admin_site = DjangoAdminSite(name=site.slug, app_name=site.slug)
-    for registered_model in site.models.all():
+    for registered_model in site.models.filter(active=True):
         ct = registered_model.model
         DynamicModelAdmin = type(
             str("%(site_name)s_%(app_label)s_%(model_name)s_Admin" % dict(

@@ -13,7 +13,7 @@ from django.contrib.contenttypes.management import update_contenttypes
 from django.db.models import get_apps, get_models
 from django.db.models.fields.related import RelatedField, RelatedObject
 
-from admin_customizer.models import AvailableField
+from admin_customizer.models import AvailableField, RegisteredModel
 from admin_customizer import conf
 
 def filter_by(list, **kwargs):
@@ -130,6 +130,7 @@ class Command(NoArgsCommand):
 
         if options.get('erase'):
             print "Deleted %s available fields." % AvailableField.objects.all().delete()
+            print "Deactivated all %s registerd models." % RegisteredModel.objects.all().update(active=False)
 
         stale_fields = set(AvailableField.objects.select_related(
             'model',
@@ -151,7 +152,6 @@ class Command(NoArgsCommand):
                                              model=opts.object_name.lower())
                 for field_name in opts.get_all_field_names():
                     field, model, direct, mtm = opts.get_field_by_name(field_name)
-                    print field_name, field.name, type(field), field
                     get_or_create(stale_fields, all_fields, verbosity,
                         name = get_name_for(field, field_name),
                         type = get_type_for(field),

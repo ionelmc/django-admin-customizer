@@ -84,8 +84,14 @@ class RegisteredModelAdmin(admin.ModelAdmin):
 
     def get_form(self, request, obj=None, **kwargs):
         kwargs['form'] = registered_model_form_factory(obj and obj.model)
-        return super(RegisteredModelAdmin, self).get_form(request, obj=obj, **kwargs)
+        return super(RegisteredModelAdmin, self).get_form(request,
+                                                          obj=obj, **kwargs)
 
+    def save_model(self, request, obj, form, change):
+        if change:
+            obj.active = True
+        return super(RegisteredModelAdmin, self).save_model(
+            request, obj, form, change)
 admin.site.register(RegisteredModel, RegisteredModelAdmin)
 
 class AvailableFieldAdmin(admin.ModelAdmin):
