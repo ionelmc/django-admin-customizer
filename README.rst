@@ -92,6 +92,24 @@ Settings
 ``ADMIN_CUSTOMIZER_MAX_FIELD_DEPTH`` - depth to look for relations when
 inspecting models.
 
+Middleware
+==========
+
+To enable urlpattern reloading add
+``'admin_customizer.middleware.URLResolverReloadMiddleware'`` to
+``MIDDLEWARE_CLASSES``.
+
+.. warning::
+
+    You must have working django cache for this to work properly ! See django's
+    `cache documentation
+    <https://docs.djangoproject.com/en/dev/topics/cache/#setting-up-the-cache>`_
+    on this.
+
+If you do not enable this you will have to restart the webserver after every
+AdminSite or RegisteredModel change !
+
+
 Screenshots
 ===========
 
