@@ -26,7 +26,7 @@ class RegisteredModel(models.Model):
         unique_together = 'model', 'admin_site'
 
     model = models.ForeignKey("contenttypes.ContentType")
-    admin_site = models.ForeignKey("AdminSite")
+    admin_site = models.ForeignKey("AdminSite", related_name="models")
     list_display = models.ManyToManyField(
         "AvailableField",
         related_name = "registeredmodels_with_list_display",
