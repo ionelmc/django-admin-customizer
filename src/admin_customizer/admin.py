@@ -85,10 +85,14 @@ class RegisteredModelAdmin(admin.ModelAdmin):
             )
     def admin_site_display(self, obj):
         return '<a href="%(url)s">%(url)s</a>' % dict(
-            url = unicode(obj.admin_site)
+            url = ''.join([
+                unicode(obj.admin_site),
+                obj.model.app_label, "/",
+                obj.model.model, "/",
+            ])
         )
     admin_site_display.allow_tags = True
-    admin_site_display.short_description = _("Admin site")
+    admin_site_display.short_description = _("Admin url")
 
     def get_readonly_fields(self, request, obj=None):
         if obj:
