@@ -29,6 +29,7 @@ def registered_model_form_factory(model):
                 AvailableField.objects.filter_reachable_for_model(model).filter(
                     type__in = AvailableField.LIST_FILTER_TYPES
                 ),
+                required = False,
             )
             search_fields = FieldSelectField(
                 _('"search_fields" (changelist search)'),
@@ -36,6 +37,7 @@ def registered_model_form_factory(model):
                 AvailableField.objects.filter_reachable_for_model(model).filter(
                     type__in = AvailableField.SEARCH_FIELDS_TYPES
                 ),
+                required = False,
             )
             raw_id_fields = FieldSelectField(
                 _('"raw_id_fields" (id-editable in changelist/edit/add)'),
@@ -44,6 +46,7 @@ def registered_model_form_factory(model):
                     model,
                     type__in = AvailableField.RAW_ID_FIELDS_TYPES
                 ),
+                required = False,
             )
         return EditRegisteredModelForm
     else:
@@ -51,10 +54,14 @@ def registered_model_form_factory(model):
             class Meta:
                 model = RegisteredModel
 
-            model = ContentTypeChoiceField(ContentType.objects.order_by('app_label', 'model'))
+            model = ContentTypeChoiceField(
+                ContentType.objects.order_by('app_label', 'model')
+            )
         return AddRegisteredModelForm
 
 class RegisteredModelAdmin(admin.ModelAdmin):
+    list_display = list_filter = "model", "admin_site", "active"
+
     def get_fieldsets(self, request, obj=None):
         if obj:
             return (
@@ -80,7 +87,8 @@ class RegisteredModelAdmin(admin.ModelAdmin):
         if obj:
             return 'model',
         else:
-            return set(flatten_fieldsets(self.get_fieldsets(request, obj))) - set(('model', 'admin_site'))
+            return set(flatten_fieldsets(self.get_fieldsets(
+                request, obj))) - set(('model', 'admin_site'))
 
     def get_form(self, request, obj=None, **kwargs):
         kwargs['form'] = registered_model_form_factory(obj and obj.model)
@@ -96,6 +104,8 @@ admin.site.register(RegisteredModel, RegisteredModelAdmin)
 
 class AvailableFieldAdmin(admin.ModelAdmin):
     list_display = 'name', 'model', 'type', 'target', 'through_display'
+    list_filter = 'name', 'model', 'type', 'target'
+    search_fields = 'name', 'model__model'
 
     def through_display(self, obj):
         return "AF:%s" % obj.through_id
