@@ -85,25 +85,31 @@ class AvailableField(models.Model):
     objects = AvailableFieldManager()
 
     def __unicode__(self):
-        return u"AvailableField #%s %s.%s (%s) %s" % (
+        return u"AvailableField #%s %s.%s (%s)%s" % (
             self.id,
             self.model.model,
             self.name,
             '%s: %s' % (self.type, self.target.model) if self.target else self.type,
-            'through: (%s)' % self.through if self.through else ''
-        )
-
-    def __str__(self):
-        return "AF%s %s.%s (%s) %s" % (
-            self.id,
-            self.model.model,
-            self.name,
-            '%s: %s' % (self.type, self.target.model) if self.target else self.type,
-            'through: (%s)' % self.through if self.through else ''
+            ' through: (%s)' % self.through if self.through else ''
         )
 
     def __repr__(self):
-        return "<%s>" % self.__str__()
+        return '<AvailableField "%s" %s.%s (%s)%s>' % (
+            self.id,
+            self.model.model,
+            self.name,
+            '%s: %s' % (self.type, self.target.model) if self.target else self.type,
+            ' through: (%s)' % self.through if self.through else ''
+        )
+
+    def __str__(self):
+        return "AF%s %s.%s (%s)%s" % (
+            self.id,
+            self.model.model,
+            self.name,
+            '%s: %s' % (self.type, self.target.model) if self.target else self.type,
+            ' through: AF#%s' % self.through_id if self.through_id else ''
+        )
 
     def path_for(self, model):
         af = self
