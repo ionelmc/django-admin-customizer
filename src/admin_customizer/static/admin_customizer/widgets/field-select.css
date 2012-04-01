@@ -42,3 +42,12 @@
     margin: 0 !important;
     padding-left: 10px !important;
 }
+.move-up {
+    float: left;
+}
+.move-down {
+    float: right;
+}
+.move-up, .move-down {
+    font-weight: bold;
+}

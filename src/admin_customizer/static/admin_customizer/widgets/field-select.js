@@ -173,14 +173,42 @@
                 }
             });
         }
+        function choosen_on_move_up() {
+            var elements = choosen_select.find('option:selected')
+            var prev_element = elements.first().prev();
+            elements.insertBefore(prev_element);
+            return false;
+        }
+        function choosen_on_move_down() {
+            var elements = choosen_select.find('option:selected')
+            var next_element = elements.last().next();
+            elements.insertAfter(next_element);
+            return false;
+        }
 
         choosen_select.wrap('<div class="field-selector-choosen" />').parent()
             .prepend(
                 $('<p/>')
-                    .text(gettext('Select your choice(s) and click '))
+                    .text(gettext('Select your choice(s) and click ') + ' ')
                     .append($('<img/>', {src: $settings.admin_media+'img/admin/selector-add.gif', alt: 'Add'}))
             )
-            .prepend('<h2>' + gettext('Chosen') + ' '+$settings.field_name+'</h2>');
+            .prepend('<h2>' + gettext('Chosen') + ' '+$settings.field_name+'</h2>')
+            .append(
+                $('<a>', {"class": 'move-up', href: '#'})
+                    .click(choosen_on_move_up)
+                    .text(gettext('Move up') + ' ')
+                    .append($('<img/>', {
+                        src: $settings.admin_media+'img/admin/arrow-up.gif',
+                        alt: 'Move up'
+                    })))
+            .append(
+                $('<a>', {"class": 'move-down', href: '#'})
+                    .click(choosen_on_move_down)
+                    .text(gettext('Move down') + ' ')
+                    .append($('<img/>', {
+                        src: $settings.admin_media+'img/admin/arrow-down.gif',
+                        alt: 'Move down'
+                    })));
         container.prepend('<p>' + gettext(' - no search -') + '</p>');
         container.prepend('<h2>' + gettext('Available ')+$settings.field_name+'</h2>');
         $('<ul>', {'class': "selector-chooser field-chooser"})
