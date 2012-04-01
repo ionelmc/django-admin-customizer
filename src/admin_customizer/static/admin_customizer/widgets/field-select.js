@@ -153,6 +153,9 @@
                 }
                 current_level ++;
             }
+            update_select(choosen_select, levels[0], cache.root);
+
+
         }
         function add_to_choosen() {
             container.find('option:selected').each(function() {
