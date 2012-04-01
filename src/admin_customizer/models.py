@@ -60,17 +60,16 @@ class AvailableField(models.Model):
 
     model = models.ForeignKey("contenttypes.ContentType", related_name="+")
     name = models.TextField()
-    LIST_DISPLAY_TYPES = ('fk', 'mtm', 'oto', 'rev', 'meth', 'other')
-    LIST_FILTER_TYPES = ('fk', 'mtm', 'oto', 'rev', 'other')
+    LIST_DISPLAY_TYPES = ('fk', 'mtm', 'oto', 'meth', 'other')
+    LIST_FILTER_TYPES = ('fk', 'mtm', 'oto', 'other')
     RAW_ID_FIELDS_TYPES = ('fk', 'mtm')
-    SEARCH_FIELDS_TYPES = ('fk', 'mtm', 'oto', 'rev', 'other')
+    SEARCH_FIELDS_TYPES = ('fk', 'mtm', 'oto', 'other')
     TYPES = (
         ('fk', _("Foreign key field")),
         ('mtm', _("Many to many field")),
         ('oto', _("One to one field")),
         ('rev', _("One to many (reverse foreign key) field")),
         ('meth', _("Model method")),
-        #('span', _("Field from related model"))
         ('other', _("Other type of field"))
     )
     type = models.CharField(max_length=10, choices=TYPES)
