@@ -64,6 +64,6 @@ class FieldSelect(forms.SelectMultiple):
             attrs['id'],
             escapejs(self.verbose_name),
             settings.ADMIN_MEDIA_PREFIX,
-            conf.ADMIN_CUSTOMIZER_MAX_FIELD_DEPTH,
+            conf.MAX_FIELD_DEPTH,
         ))
         return mark_safe(u''.join(output))

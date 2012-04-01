@@ -30,7 +30,7 @@ def filter_by(list, **kwargs):
     return ret
 
 def depth(af, current=1):
-    if not af.through or current > conf.ADMIN_CUSTOMIZER_MAX_FIELD_DEPTH:
+    if not af.through or current > conf.MAX_FIELD_DEPTH:
         return current
     else:
         return depth(af.through, current+1)
@@ -135,7 +135,7 @@ class Command(NoArgsCommand):
         stale_fields = set(AvailableField.objects.select_related(
             'model',
             'target',
-            'through__' * conf.ADMIN_CUSTOMIZER_MAX_FIELD_DEPTH
+            'through__' * conf.MAX_FIELD_DEPTH
         ))
         all_fields = stale_fields.copy()
 
@@ -188,7 +188,7 @@ class Command(NoArgsCommand):
                     ),
                     sys.stdout.flush()
                 for raf in filter_by(all_fields, target=af.model):
-                    if depth(raf) > conf.ADMIN_CUSTOMIZER_MAX_FIELD_DEPTH:
+                    if depth(raf) > conf.MAX_FIELD_DEPTH:
                         continue
                     if get_or_create(stale_fields, all_fields, verbosity,
                         name = af.name,

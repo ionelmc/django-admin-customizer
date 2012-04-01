@@ -1,22 +1,41 @@
 from logging import getLogger
 logger = getLogger(__name__)
 
-import sys
+import hashlib
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.db.models.signals import class_prepared
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes.management import update_contenttypes
-from django.db.models import get_apps, get_models, signals
-from django.utils.encoding import smart_unicode
-from django.utils.importlib import import_module
+from django.core.urlresolvers import reverse
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.core.cache import cache
 
 from .managers import AvailableFieldManager
 from . import conf
 
+def get_active_models():
+    result = {}
+    for site in AdminSite.objects.all():
+        result[site.slug] = list(site.models.filter(active=True).order_by('pk'))
+
+    if conf.URL_RELOADER_ENABLED:
+        checksum = hashlib.md5(';'.join(
+            "%s: %s" % (
+                slug,
+                ', '.join(
+                    reg_model.modified.isoformat() for reg_model in reg_models
+                )
+            ) for slug, reg_models in result.items()
+        )).hexdigest()
+        cache.set(conf.URL_RELOADER_CACHE_KEY, checksum)
+    else:
+        checksum = None
+
+    return result, checksum
+
 class AdminSite(models.Model):
     slug = models.SlugField()
+
     def __unicode__(self):
         if hasattr(self, 'unicode_display'):
             return self.unicode_display
@@ -51,6 +70,8 @@ class RegisteredModel(models.Model):
         blank = True,
     )
     active = models.BooleanField(default=False)
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
         if self.model:
@@ -121,7 +142,7 @@ class AvailableField(models.Model):
         else:
             label = [af.name]
             level = 0
-            while af.through and level < conf.ADMIN_CUSTOMIZER_MAX_FIELD_DEPTH:
+            while af.through and level < conf.MAX_FIELD_DEPTH:
                 level += 1
                 af = af.through
                 label.append(af.name)
@@ -129,20 +150,15 @@ class AvailableField(models.Model):
             label = '__'.join(reversed(label))
             if af.model != model:
                 logger.error("Failed to generate path for %s relative to %s. Result was %s.%s (%s)", self, model, af.model, label, af)
-            #    return u"!!! %s.%s -- %s" % (
-            #        af.model,
-            #        label,
-            #        af
-            #    )
-            #else:
-            return label
-    def XXX_simple(self, *a):
-        pass
+                return u"!!! %s.%s -- %s" % (
+                    af.model,
+                    label,
+                    af
+                )
+            else:
+                return label
 
-    @staticmethod
-    def XXX_static():
-        pass
-
-    @classmethod
-    def XXX_class(cls, asdf=123):
-        pass
+@receiver(post_save, sender=AdminSite)
+@receiver(post_save, sender=RegisteredModel)
+def on_models_change(sender, **kwargs):
+    active_models, checksum = get_active_models()

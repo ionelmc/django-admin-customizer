@@ -1,17 +1,19 @@
 from django.conf.urls.defaults import patterns, url, include
 from django.contrib.admin import AdminSite as DjangoAdminSite, ModelAdmin
-from .models import AdminSite
+
+from .models import get_active_models
 
 urlpatterns = patterns("admin_customizer.views",
-    url('^$', 'admin_index'),
+    url('^$', 'admin_index', name="admin_customizer-admin_index"),
 )
-for site in AdminSite.objects.all():
-    admin_site = DjangoAdminSite(name=site.slug, app_name=site.slug)
-    for registered_model in site.models.filter(active=True):
+active_models, checksum = get_active_models()
+for slug, models in active_models.items():
+    admin_site = DjangoAdminSite(name=slug, app_name=slug)
+    for registered_model in models:
         ct = registered_model.model
         DynamicModelAdmin = type(
             str("%(site_name)s_%(app_label)s_%(model_name)s_Admin" % dict(
-                site_name = site.slug,
+                site_name = slug,
                 app_label = ct.app_label,
                 model_name = ct.model,
             )),
@@ -35,5 +37,4 @@ for site in AdminSite.objects.all():
             ct.model_class(),
             DynamicModelAdmin
         )
-    urlpatterns.append(url('^%s/' % site.slug, include(admin_site.urls)))
-
+    urlpatterns.append(url('^%s/' % slug, include(admin_site.urls)))
