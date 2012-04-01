@@ -52,7 +52,7 @@ def get_type_for(field):
     elif isinstance(field, models.OneToOneField):
         return 'oto'
     elif isinstance(field, RelatedObject):
-        return 'mtm'
+        return 'rev'
     else:
         return 'other'
 
