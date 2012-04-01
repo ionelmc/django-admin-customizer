@@ -11,16 +11,16 @@ Django admin customizing interface
 Implementation plan
 ===================
 
-    * models - *done*
-    * generator for models (as management command) - *done*
-    * configration ui - *done*
-    * pull model methods and reverse related descriptors in the list of fields - *done*
-    * sorting fields in configuration ui - *pending*
-    * modeladmin factory - *done-ish*
-    * dynamic url dispatch to managed modeladmins - *done*
-    * dynamic url dispatch reload + invalidation - *pending*
-    * actions configurator - *pending*
-    * base admin class support - *pending*
+* models - *done*
+* generator for models (as management command) - *done*
+* configration ui - *done*
+* pull model methods and reverse related descriptors in the list of fields - *done*
+* sorting fields in configuration ui - *pending*
+* modeladmin factory - *done-ish*
+* dynamic url dispatch to managed modeladmins - *done*
+* dynamic url dispatch reload + invalidation - *pending*
+* actions configurator - *pending*
+* base admin class support - *pending*
 
 Features
 ========
