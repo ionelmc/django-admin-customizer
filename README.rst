@@ -42,6 +42,11 @@ Add ``admin_customizer`` to ``INSTALLED_APPS``::
 
     INSTALLED_APPS += ("admin_customizer", )
 
+Add the admin customizer's urls to your root url conf. This is the url where
+your will access your custom admin instances. Eg: in your project's urls.py add::
+    
+    (r'^admin/_/', include('admin_customizer.urls')),
+
 After that you need to run::
 
     manage.py syncdb
