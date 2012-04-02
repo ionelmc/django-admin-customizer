@@ -11,6 +11,7 @@ from django.dispatch import receiver
 from django.core.cache import cache
 
 from .managers import AvailableFieldManager
+from .fields import OrderPreservingManyToManyField
 from . import conf
 
 def get_active_models():
@@ -42,14 +43,13 @@ class AdminSite(models.Model):
         self.unicode_display = "%s%s/" % (reverse('admin_customizer-admin_index'), self.slug)
         return self.unicode_display
 
-
 class RegisteredModel(models.Model):
     class Meta:
         unique_together = 'model', 'admin_site'
 
     model = models.ForeignKey("contenttypes.ContentType")
     admin_site = models.ForeignKey("AdminSite", related_name="models")
-    list_display = models.ManyToManyField(
+    list_display = OrderPreservingManyToManyField(
         "AvailableField",
         related_name = "registeredmodels_with_list_display",
         blank = True,

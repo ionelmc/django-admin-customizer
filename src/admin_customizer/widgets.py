@@ -1,3 +1,5 @@
+from itertools import chain
+
 from django.conf import settings
 from django import forms
 from django.forms.widgets import Widget
@@ -7,6 +9,7 @@ from django.utils.encoding import force_unicode
 from django.utils.html import escape, conditional_escape, escapejs
 
 from . import conf
+from .orderedset import OrderedSet
 
 class NotAnInput(Widget):
     """
@@ -36,9 +39,10 @@ class FieldSelect(forms.SelectMultiple):
         self.verbose_name = verbose_name
         super(FieldSelect, self).__init__(attrs, choices)
 
-    def render_option(self, selected_choices, option_value, option_label):
+    def render_option(self, selected_choices, option_value, option_label,
+                      selected):
         option_value = force_unicode(option_value)
-        selected_html = (option_value in selected_choices) and u' selected="selected"' or ''
+        selected_html = selected and u' selected="selected"' or ''
         # Disabled for now, should reenable later if all the m2m widgets are changed to this
         return u'<option value="%s" data-label="%s" data-parent="%s"%s>%s</option>' % (
             escape(option_value),
@@ -46,6 +50,28 @@ class FieldSelect(forms.SelectMultiple):
             escape(option_label.parent or ''),
             selected_html,
             conditional_escape(force_unicode(option_label.verbose_label)))
+
+    def render_options(self, choices, selected_choices):
+        selected_choices = OrderedSet([
+            force_unicode(v) for v in selected_choices
+        ])
+        output = []
+        options = dict(
+            (force_unicode(value), label)
+            for value, label in chain(self.choices, choices)
+        )
+        for option_value in selected_choices:
+
+            if option_value in options:
+                option_label = options[option_value]
+                output.append(self.render_option(
+                    selected_choices, option_value, option_label, True))
+
+        for option_value, option_label in chain(self.choices, choices):
+            if option_value not in selected_choices:
+                output.append(self.render_option(
+                    selected_choices, option_value, option_label, False))
+        return u'\n'.join(output)
 
     def render(self, name, value, attrs=None, choices=()):
         if attrs is None: attrs = {}
