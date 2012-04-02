@@ -28,7 +28,10 @@ class FieldSelectChoiceIterator(ModelChoiceIterator):
 class FieldSelectField(ModelMultipleChoiceField):
 
     def __init__(self, verbose_name, relative_to, queryset, **kwargs):
-        self.widget = FieldSelect(verbose_name)
+        self.widget = FieldSelect(
+            verbose_name,
+            enable_ordering = kwargs.pop('enable_ordering', False)
+        )
         self.relative_to = relative_to
         super(FieldSelectField, self).__init__(queryset, **kwargs)
 

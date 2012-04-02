@@ -35,8 +35,9 @@ class FieldSelect(forms.SelectMultiple):
                 'admin_customizer/widgets/field-select.css',
             )
         }
-    def __init__(self, verbose_name, attrs=None, choices=()):
+    def __init__(self, verbose_name, attrs=None, choices=(), enable_ordering=False):
         self.verbose_name = verbose_name
+        self.enable_ordering = enable_ordering
         super(FieldSelect, self).__init__(attrs, choices)
 
     def render_option(self, selected_choices, option_value, option_label,
@@ -61,7 +62,6 @@ class FieldSelect(forms.SelectMultiple):
             for value, label in chain(self.choices, choices)
         )
         for option_value in selected_choices:
-
             if option_value in options:
                 option_label = options[option_value]
                 output.append(self.render_option(
@@ -83,7 +83,8 @@ class FieldSelect(forms.SelectMultiple):
                     field_name: '%s',
                     admin_media: '%s',
                     max_levels: %s,
-                    add_parents: false
+                    add_parents: false,
+                    enable_ordering: %s
                 });
             });</script>
         ''' % (
@@ -91,5 +92,6 @@ class FieldSelect(forms.SelectMultiple):
             escapejs(self.verbose_name),
             settings.ADMIN_MEDIA_PREFIX,
             conf.MAX_FIELD_DEPTH,
+            'true' if self.enable_ordering else 'false'
         ))
         return mark_safe(u''.join(output))

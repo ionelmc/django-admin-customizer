@@ -3,7 +3,8 @@
     var $settings = {
         field_name: 'Object',
         max_levels: 3,
-        add_parents: true
+        add_parents: true,
+        enable_ordering: false
     };
     if (settings) {
         $.extend($settings, settings);
@@ -193,22 +194,23 @@
                     .append($('<img/>', {src: $settings.admin_media+'img/admin/selector-add.gif', alt: 'Add'}))
             )
             .prepend('<h2>' + gettext('Chosen') + ' '+$settings.field_name+'</h2>')
-            .append(
-                $('<a>', {"class": 'move-up', href: '#'})
+        if ($settings.enable_ordering) {
+            choosen_select.parent()
+                .append($('<a>', {"class": 'move-up', href: '#'})
                     .click(choosen_on_move_up)
                     .text(gettext('Move up') + ' ')
                     .append($('<img/>', {
                         src: $settings.admin_media+'img/admin/arrow-up.gif',
                         alt: 'Move up'
                     })))
-            .append(
-                $('<a>', {"class": 'move-down', href: '#'})
+                .append($('<a>', {"class": 'move-down', href: '#'})
                     .click(choosen_on_move_down)
                     .text(gettext('Move down') + ' ')
                     .append($('<img/>', {
                         src: $settings.admin_media+'img/admin/arrow-down.gif',
                         alt: 'Move down'
                     })));
+        }
         container.prepend('<p>' + gettext(' - no search -') + '</p>');
         container.prepend('<h2>' + gettext('Available ')+$settings.field_name+'</h2>');
         $('<ul>', {'class': "selector-chooser field-chooser"})

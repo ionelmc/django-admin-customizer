@@ -22,6 +22,7 @@ def registered_model_form_factory(model):
                 AvailableField.objects.filter_for_model(model=model).filter(
                     type__in = AvailableField.LIST_DISPLAY_TYPES
                 ),
+                enable_ordering = True,
             )
             list_filter = FieldSelectField(
                 _('"list_filter" (changelist filters)'),
