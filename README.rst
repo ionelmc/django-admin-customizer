@@ -4,19 +4,6 @@
 
 Django admin customizing interface
 
-Implementation plan
-===================
-
-* models - *done*
-* generator for models (as management command) - *done*
-* configration ui - *done*
-* pull model methods and reverse related descriptors in the list of fields - *done*
-* sorting fields in configuration ui - *done*
-* modeladmin factory - *done-ish*
-* dynamic url dispatch to managed modeladmins - *done*
-* dynamic url dispatch reload + invalidation - *done*
-* actions configurator - **pending**
-* base admin class support - **pending**
 
 Features
 ========
@@ -27,14 +14,18 @@ Features
   * list_display
   * list_filter
   * raw_id_fields
-  * actions
   * search_fields
+
+TODO
+====
+
+* actions configurator
+* base admin class support
 
 Requirements
 ============
 
 * Django (versions tbd - maybe >= 1.3)
-
 
 Installation guide
 ==================
@@ -81,6 +72,8 @@ site-packages/admin_customizer/static/admin_customizer dir to <your media root>/
 
 Making extra actions available
 ==============================
+
+*TODO*
 
 Settings
 ========
