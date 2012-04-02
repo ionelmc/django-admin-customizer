@@ -115,4 +115,4 @@ Screenshots
 
 Edit page:
 
-.. image:: https://github.com/downloads/ionelmc/django-admin-customizer/asdf
+.. image:: https://github.com/downloads/ionelmc/django-admin-customizer/admin-customizer-registered-model-edit-page.png
