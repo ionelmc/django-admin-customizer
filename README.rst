@@ -25,7 +25,13 @@ TODO
 Requirements
 ============
 
-* Django (versions tbd - maybe >= 1.3)
+* Django 1.2, 1.3, 1.4, trunk. Django 1.1 is NOT supported.
+* Python 2.6 or 2.7
+
+|status|_
+
+.. |status| image:: http://travis-ci.org/ionelmc/django-admin-customizer.png
+.. _status: http://travis-ci.org/ionelmc/django-admin-customizer
 
 Installation guide
 ==================
@@ -44,7 +50,7 @@ Add ``admin_customizer`` to ``INSTALLED_APPS``::
 
 Add the admin customizer's urls to your root url conf. This is the url where
 your will access your custom admin instances. Eg: in your project's urls.py add::
-    
+
     (r'^admin/_/', include('admin_customizer.urls')),
 
 After that you need to run::

@@ -1,0 +1,221 @@
+[{
+    "pk": 1,
+    "model": "admin_customizer.availablefield",
+    "fields": {
+        "through": null,
+        "model": ["test_app", "author"],
+        "type": "rev",
+        "name": "book_set",
+        "target": null
+    }
+}, {
+    "pk": 2,
+    "model": "admin_customizer.availablefield",
+    "fields": {
+        "through": null,
+        "model": ["test_app", "author"],
+        "type": "other",
+        "name": "id",
+        "target": null
+    }
+}, {
+    "pk": 3,
+    "model": "admin_customizer.availablefield",
+    "fields": {
+        "through": null,
+        "model": ["test_app", "author"],
+        "type": "other",
+        "name": "name",
+        "target": null
+    }
+}, {
+    "pk": 4,
+    "model": "admin_customizer.availablefield",
+    "fields": {
+        "through": null,
+        "model": ["test_app", "book"],
+        "type": "mtm",
+        "name": "authors",
+        "target": ["test_app", "author"]
+    }
+}, {
+    "pk": 5,
+    "model": "admin_customizer.availablefield",
+    "fields": {
+        "through": null,
+        "model": ["test_app", "book"],
+        "type": "rev",
+        "name": "booknote_set",
+        "target": null
+    }
+}, {
+    "pk": 6,
+    "model": "admin_customizer.availablefield",
+    "fields": {
+        "through": null,
+        "model": ["test_app", "book"],
+        "type": "other",
+        "name": "created",
+        "target": null
+    }
+}, {
+    "pk": 7,
+    "model": "admin_customizer.availablefield",
+    "fields": {
+        "through": null,
+        "model": ["test_app", "book"],
+        "type": "other",
+        "name": "id",
+        "target": null
+    }
+}, {
+    "pk": 8,
+    "model": "admin_customizer.availablefield",
+    "fields": {
+        "through": null,
+        "model": ["test_app", "book"],
+        "type": "other",
+        "name": "name",
+        "target": null
+    }
+}, {
+    "pk": 9,
+    "model": "admin_customizer.availablefield",
+    "fields": {
+        "through": null,
+        "model": ["test_app", "booknote"],
+        "type": "fk",
+        "name": "book",
+        "target": ["test_app", "book"]
+    }
+}, {
+    "pk": 10,
+    "model": "admin_customizer.availablefield",
+    "fields": {
+        "through": null,
+        "model": ["test_app", "booknote"],
+        "type": "other",
+        "name": "id",
+        "target": null
+    }
+}, {
+    "pk": 11,
+    "model": "admin_customizer.availablefield",
+    "fields": {
+        "through": null,
+        "model": ["test_app", "booknote"],
+        "type": "other",
+        "name": "notes",
+        "target": null
+    }
+}, {
+    "pk": 12,
+    "model": "admin_customizer.availablefield",
+    "fields": {
+        "through": 4,
+        "model": ["test_app", "author"],
+        "type": "rev",
+        "name": "book_set",
+        "target": null
+    }
+}, {
+    "pk": 13,
+    "model": "admin_customizer.availablefield",
+    "fields": {
+        "through": 4,
+        "model": ["test_app", "author"],
+        "type": "other",
+        "name": "id",
+        "target": null
+    }
+}, {
+    "pk": 14,
+    "model": "admin_customizer.availablefield",
+    "fields": {
+        "through": 4,
+        "model": ["test_app", "author"],
+        "type": "other",
+        "name": "name",
+        "target": null
+    }
+}, {
+    "pk": 15,
+    "model": "admin_customizer.availablefield",
+    "fields": {
+        "through": 9,
+        "model": ["test_app", "book"],
+        "type": "mtm",
+        "name": "authors",
+        "target": ["test_app", "author"]
+    }
+}, {
+    "pk": 16,
+    "model": "admin_customizer.availablefield",
+    "fields": {
+        "through": 9,
+        "model": ["test_app", "book"],
+        "type": "rev",
+        "name": "booknote_set",
+        "target": null
+    }
+}, {
+    "pk": 17,
+    "model": "admin_customizer.availablefield",
+    "fields": {
+        "through": 9,
+        "model": ["test_app", "book"],
+        "type": "other",
+        "name": "created",
+        "target": null
+    }
+}, {
+    "pk": 18,
+    "model": "admin_customizer.availablefield",
+    "fields": {
+        "through": 9,
+        "model": ["test_app", "book"],
+        "type": "other",
+        "name": "id",
+        "target": null
+    }
+}, {
+    "pk": 19,
+    "model": "admin_customizer.availablefield",
+    "fields": {
+        "through": 9,
+        "model": ["test_app", "book"],
+        "type": "other",
+        "name": "name",
+        "target": null
+    }
+}, {
+    "pk": 20,
+    "model": "admin_customizer.availablefield",
+    "fields": {
+        "through": 15,
+        "model": ["test_app", "author"],
+        "type": "rev",
+        "name": "book_set",
+        "target": null
+    }
+}, {
+    "pk": 21,
+    "model": "admin_customizer.availablefield",
+    "fields": {
+        "through": 15,
+        "model": ["test_app", "author"],
+        "type": "other",
+        "name": "id",
+        "target": null
+    }
+}, {
+    "pk": 22,
+    "model": "admin_customizer.availablefield",
+    "fields": {
+        "through": 15,
+        "model": ["test_app", "author"],
+        "type": "other",
+        "name": "name",
+        "target": null
+    }
+}]

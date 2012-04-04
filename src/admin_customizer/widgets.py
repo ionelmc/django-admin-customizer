@@ -6,7 +6,11 @@ from django.forms.widgets import Widget
 from django.template.defaulttags import mark_safe
 from django.template.defaultfilters import force_escape
 from django.utils.encoding import force_unicode
-from django.utils.html import escape, conditional_escape, escapejs
+from django.utils.html import escape, conditional_escape
+try:
+    from django.utils.html import escapejs
+except ImportError:
+    from django.template.defaultfilters import escapejs
 
 from . import conf
 from .orderedset import OrderedSet
@@ -68,6 +72,7 @@ class FieldSelect(forms.SelectMultiple):
                     selected_choices, option_value, option_label, True))
 
         for option_value, option_label in chain(self.choices, choices):
+            option_value = str(option_value)
             if option_value not in selected_choices:
                 output.append(self.render_option(
                     selected_choices, option_value, option_label, False))

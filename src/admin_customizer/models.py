@@ -7,7 +7,6 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.core.cache import cache
 
 from .managers import AvailableFieldManager
@@ -65,7 +64,7 @@ class RegisteredModel(models.Model):
         blank = True,
     )
     raw_id_fields = models.ManyToManyField("AvailableField",
-        related_name = "+",
+        related_name = "egisteredmodels_with_raw_id_fields",
         limit_choices_to = {'type__in': ('oto', 'fk', 'mtm')},
         blank = True,
     )
@@ -82,8 +81,12 @@ class RegisteredModel(models.Model):
 class AvailableField(models.Model):
     class Meta:
         unique_together = 'model', 'name', 'type', 'target', 'through'
+        ordering = 'id',
 
-    model = models.ForeignKey("contenttypes.ContentType", related_name="+")
+    model = models.ForeignKey(
+        "contenttypes.ContentType",
+        related_name = "availablefields_with_model"
+    )
     name = models.TextField()
     LIST_DISPLAY_TYPES = ('fk', 'mtm', 'oto', 'meth', 'other')
     LIST_FILTER_TYPES = ('fk', 'mtm', 'oto', 'other')
@@ -102,7 +105,7 @@ class AvailableField(models.Model):
         "contenttypes.ContentType",
         null = True,
         blank = True,
-        related_name = "+"
+        related_name = "availablefields_with_target"
     )
     through = models.ForeignKey("self", null=True, blank=True)
 
@@ -158,7 +161,7 @@ class AvailableField(models.Model):
             else:
                 return label
 
-@receiver(post_save, sender=AdminSite)
-@receiver(post_save, sender=RegisteredModel)
 def on_models_change(sender, **kwargs):
     active_models, checksum = get_active_models()
+post_save.connect(on_models_change, sender=AdminSite)
+post_save.connect(on_models_change, sender=RegisteredModel)
