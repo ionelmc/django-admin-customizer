@@ -5,7 +5,7 @@ import os
 
 setup(
     name = "django-admin-customizer",
-    version = "0.1",
+    version = "0.2",
     url = 'https://github.com/ionelmc/django-admin-customizer',
     download_url = '',
     license = 'BSD',
