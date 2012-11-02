@@ -28,10 +28,9 @@ Requirements
 * Django 1.2, 1.3, 1.4, trunk. Django 1.1 is NOT supported.
 * Python 2.6 or 2.7
 
-|status|_
-
-.. |status| image:: http://travis-ci.org/ionelmc/django-admin-customizer.png
-.. _status: http://travis-ci.org/ionelmc/django-admin-customizer
+.. image:: https://secure.travis-ci.org/ionelmc/django-admin-customizer.png
+    :alt: Build Status
+    :target: http://travis-ci.org/ionelmc/django-admin-customizer
 
 Installation guide
 ==================
