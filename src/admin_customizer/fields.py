@@ -128,7 +128,7 @@ class OrderPreservingManyToManyField(ManyToManyField):
                             signals.m2m_changed.send(sender=rel.through, action='post_add',
                                 instance=self.instance, reverse=self.reverse,
                                 model=self.model, pk_set=new_ids, using=db)
-            elif VERSION[:2] >= (1, 4):
+            elif VERSION[:2] in ((1, 4), (1, 5)):
                 def add_items(self, source_field_name, target_field_name, *objs):
                     # source_field_name: the PK fieldname in join table for the source object
                     # target_field_name: the PK fieldname in join table for the target object
@@ -150,8 +150,12 @@ class OrderPreservingManyToManyField(ManyToManyField):
                                 new_ids.add(obj)
                         db = router.db_for_write(self.through, instance=self.instance)
                         vals = self.through._default_manager.using(db).values_list(target_field_name, flat=True)
+                        if hasattr(self, '_fk_val'):
+                            _pk_val = self._fk_val
+                        else:
+                            _pk_val = self._pk_val
                         vals = vals.filter(**{
-                            source_field_name: self._pk_val,
+                            source_field_name: _pk_val,
                             '%s__in' % target_field_name: new_ids,
                         })
                         new_ids = new_ids - set(vals)
@@ -165,7 +169,7 @@ class OrderPreservingManyToManyField(ManyToManyField):
                         # Add the ones that aren't there already
                         for obj_id in new_ids:
                             self.through._default_manager.using(db).create(**{
-                                '%s_id' % source_field_name: self._pk_val,
+                                '%s_id' % source_field_name: _pk_val,
                                 '%s_id' % target_field_name: obj_id,
                             })
 

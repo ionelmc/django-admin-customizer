@@ -141,7 +141,7 @@ class PrefetchTests(TestCase):
         new_afs = list(afs)
         random.shuffle(new_afs, lambda: 0.345)
 
-        from django.http import MultiValueDict
+        from django.utils.datastructures import MultiValueDict
         bound_form = RegModelForm(MultiValueDict({
             'list_display': [str(id) for id, name in new_afs],
         }), instance=reg_model)
