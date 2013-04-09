@@ -43,12 +43,16 @@ Or with setuptools::
 
     easy_install django-admin-customizer
 
-Add ``admin_customizer`` to ``INSTALLED_APPS``::
+Add ``admin_customizer`` to ``INSTALLED_APPS``:
+
+.. code-block:: python
 
     INSTALLED_APPS += ("admin_customizer", )
 
 Add the admin customizer's urls to your root url conf. This is the url where
-your will access your custom admin instances. Eg: in your project's urls.py add::
+your will access your custom admin instances. Eg: in your project's urls.py add:
+
+.. code-block:: python
 
     (r'^admin/_/', include('admin_customizer.urls')),
 
