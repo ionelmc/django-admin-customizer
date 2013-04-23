@@ -32,6 +32,11 @@ Requirements
     :alt: Build Status
     :target: http://travis-ci.org/ionelmc/django-admin-customizer
 
+
+.. image:: https://coveralls.io/repos/ionelmc/django-admin-customizer/badge.png?branch=master
+    :alt: Coverage Status
+    :target: https://coveralls.io/r/ionelmc/django-admin-customizer
+    
 Installation guide
 ==================
 
