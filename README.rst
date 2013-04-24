@@ -25,7 +25,7 @@ TODO
 Requirements
 ============
 
-* Django 1.2, 1.3, 1.4, trunk. Django 1.1 is NOT supported.
+* Django 1.3, 1.4 or 1.5. Django 1.2 or older is NOT supported.
 * Python 2.6 or 2.7
 
 .. image:: https://secure.travis-ci.org/ionelmc/django-admin-customizer.png
