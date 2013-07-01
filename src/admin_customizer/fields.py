@@ -128,7 +128,7 @@ class OrderPreservingManyToManyField(ManyToManyField):
                             signals.m2m_changed.send(sender=rel.through, action='post_add',
                                 instance=self.instance, reverse=self.reverse,
                                 model=self.model, pk_set=new_ids, using=db)
-            elif VERSION[:2] in ((1, 4), (1, 5)):
+            elif VERSION[:2] in ((1, 4), (1, 5), (1, 6)):
                 def add_items(self, source_field_name, target_field_name, *objs):
                     # source_field_name: the PK fieldname in join table for the source object
                     # target_field_name: the PK fieldname in join table for the target object

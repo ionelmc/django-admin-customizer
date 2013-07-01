@@ -25,7 +25,7 @@ TODO
 Requirements
 ============
 
-* Django 1.3, 1.4 or 1.5. Django 1.2 or older is NOT supported.
+* Django 1.3, 1.4, 1.5, 1.6. Django 1.2 or older is NOT supported.
 * Python 2.6 or 2.7
 
 .. image:: https://secure.travis-ci.org/ionelmc/django-admin-customizer.png
@@ -36,7 +36,7 @@ Requirements
 .. image:: https://coveralls.io/repos/ionelmc/django-admin-customizer/badge.png?branch=master
     :alt: Coverage Status
     :target: https://coveralls.io/r/ionelmc/django-admin-customizer
-    
+
 Installation guide
 ==================
 
