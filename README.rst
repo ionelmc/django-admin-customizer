@@ -124,3 +124,9 @@ Screenshots
 Edit page:
 
 .. image:: https://github.com/downloads/ionelmc/django-admin-customizer/admin-customizer-registered-model-edit-page.png
+
+
+.. image:: https://d2weczhvl823v0.cloudfront.net/ionelmc/django-admin-customizer/trend.png
+   :alt: Bitdeli badge
+   :target: https://bitdeli.com/free
+
