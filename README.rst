@@ -2,8 +2,19 @@
     django-admin-customizer
 ===============================
 
-Django admin customizing interface
+.. image:: https://secure.travis-ci.org/ionelmc/django-admin-customizer.png
+    :alt: Build Status
+    :target: http://travis-ci.org/ionelmc/django-admin-customizer
 
+.. image:: https://coveralls.io/repos/ionelmc/django-admin-customizer/badge.png?branch=master
+    :alt: Coverage Status
+    :target: https://coveralls.io/r/ionelmc/django-admin-customizer
+    
+.. image:: https://badge.fury.io/py/django-admin-customizer.png
+    :alt: PYPI Package
+    :target: https://pypi.python.org/pypi/django-admin-customizer
+    
+Django admin customizing interface
 
 Features
 ========
@@ -27,15 +38,6 @@ Requirements
 
 * Django 1.3, 1.4, 1.5, 1.6. Django 1.2 or older is NOT supported.
 * Python 2.6 or 2.7
-
-.. image:: https://secure.travis-ci.org/ionelmc/django-admin-customizer.png
-    :alt: Build Status
-    :target: http://travis-ci.org/ionelmc/django-admin-customizer
-
-
-.. image:: https://coveralls.io/repos/ionelmc/django-admin-customizer/badge.png?branch=master
-    :alt: Coverage Status
-    :target: https://coveralls.io/r/ionelmc/django-admin-customizer
 
 Installation guide
 ==================
