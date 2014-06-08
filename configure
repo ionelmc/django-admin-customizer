@@ -21,8 +21,8 @@ mangle_python = re.compile(r'[\\/:>]+')
 pythons = [
     '2.6',
     '2.7',
-    '3.3',
-    '3.4',
+#    '3.3',
+#    '3.4',
     'pypy',
 ]
 deps = [
@@ -30,7 +30,7 @@ deps = [
     'Django==1.4.13',
     'Django==1.5.8',
     'Django==1.6.5',
-    'https://www.djangoproject.com/download/1.7.b4/tarball/',
+#    'https://www.djangoproject.com/download/1.7.b4/tarball/',
 ]
 covers = [True, False]
 envs = ['']  # could be some env vars that activate certain features
