@@ -26,11 +26,10 @@ pythons = [
     'pypy',
 ]
 deps = [
-    'Django==1.3.7',
-    'Django==1.4.13',
-    'Django==1.5.8',
-    'Django==1.6.5',
-#    'https://www.djangoproject.com/download/1.7.b4/tarball/',
+    'Django==1.4.14',
+    'Django==1.5.9',
+    'Django==1.6.6',
+#    'https://www.djangoproject.com/download/1.7.c3/tarball/',
 ]
 covers = [True, False]
 envs = ['']  # could be some env vars that activate certain features
