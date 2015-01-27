@@ -6,30 +6,30 @@ env:
   global:
     LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
   matrix:
-    - TOXENV=2.6-1.4.18,coveralls
-    - TOXENV=2.6-1.4.18-nocover
+    - TOXENV=2.6-1.4.19,coveralls
+    - TOXENV=2.6-1.4.19-nocover
     - TOXENV=2.6-1.5.12,coveralls
     - TOXENV=2.6-1.5.12-nocover
     - TOXENV=2.6-1.6.10,coveralls
     - TOXENV=2.6-1.6.10-nocover
-    - TOXENV=2.6-1.7.3,coveralls
-    - TOXENV=2.6-1.7.3-nocover
-    - TOXENV=2.7-1.4.18,coveralls
-    - TOXENV=2.7-1.4.18-nocover
+    - TOXENV=2.6-1.7.4,coveralls
+    - TOXENV=2.6-1.7.4-nocover
+    - TOXENV=2.7-1.4.19,coveralls
+    - TOXENV=2.7-1.4.19-nocover
     - TOXENV=2.7-1.5.12,coveralls
     - TOXENV=2.7-1.5.12-nocover
     - TOXENV=2.7-1.6.10,coveralls
     - TOXENV=2.7-1.6.10-nocover
-    - TOXENV=2.7-1.7.3,coveralls
-    - TOXENV=2.7-1.7.3-nocover
-    - TOXENV=pypy-1.4.18,coveralls
-    - TOXENV=pypy-1.4.18-nocover
+    - TOXENV=2.7-1.7.4,coveralls
+    - TOXENV=2.7-1.7.4-nocover
+    - TOXENV=pypy-1.4.19,coveralls
+    - TOXENV=pypy-1.4.19-nocover
     - TOXENV=pypy-1.5.12,coveralls
     - TOXENV=pypy-1.5.12-nocover
     - TOXENV=pypy-1.6.10,coveralls
     - TOXENV=pypy-1.6.10-nocover
-    - TOXENV=pypy-1.7.3,coveralls
-    - TOXENV=pypy-1.7.3-nocover
+    - TOXENV=pypy-1.7.4,coveralls
+    - TOXENV=pypy-1.7.4-nocover
 before_install:
   - python --version
   - uname -a

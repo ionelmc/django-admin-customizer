@@ -26,10 +26,10 @@ pythons = [
     'pypy',
 ]
 deps = [
-    'Django==1.4.18',
+    'Django==1.4.19',
     'Django==1.5.12',
     'Django==1.6.10',
-    'Django==1.7.3',
+    'Django==1.7.4',
 ]
 covers = [True, False]
 envs = ['']  # could be some env vars that activate certain features
