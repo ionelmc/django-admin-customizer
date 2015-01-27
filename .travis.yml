@@ -12,8 +12,6 @@ env:
     - TOXENV=2.6-1.5.12-nocover
     - TOXENV=2.6-1.6.10,coveralls
     - TOXENV=2.6-1.6.10-nocover
-    - TOXENV=2.6-1.7.4,coveralls
-    - TOXENV=2.6-1.7.4-nocover
     - TOXENV=2.7-1.4.19,coveralls
     - TOXENV=2.7-1.4.19-nocover
     - TOXENV=2.7-1.5.12,coveralls

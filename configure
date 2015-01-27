@@ -45,7 +45,7 @@ skips = list(chain(  # set to [] if you don't want to skip anything
     # skip 1.7 on py2.6
     product(
         ['2.6'],
-        [dep for dep in deps if 'djangoproject.com/download/1.7' in dep],
+        [dep for dep in deps if 'Django==1.7' in dep],
         covers,
         envs
     ),
