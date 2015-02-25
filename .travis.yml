@@ -18,16 +18,16 @@ env:
     - TOXENV=2.7-1.5.12-nocover
     - TOXENV=2.7-1.6.10,coveralls
     - TOXENV=2.7-1.6.10-nocover
-    - TOXENV=2.7-1.7.4,coveralls
-    - TOXENV=2.7-1.7.4-nocover
+    - TOXENV=2.7-1.7.5,coveralls
+    - TOXENV=2.7-1.7.5-nocover
     - TOXENV=pypy-1.4.19,coveralls
     - TOXENV=pypy-1.4.19-nocover
     - TOXENV=pypy-1.5.12,coveralls
     - TOXENV=pypy-1.5.12-nocover
     - TOXENV=pypy-1.6.10,coveralls
     - TOXENV=pypy-1.6.10-nocover
-    - TOXENV=pypy-1.7.4,coveralls
-    - TOXENV=pypy-1.7.4-nocover
+    - TOXENV=pypy-1.7.5,coveralls
+    - TOXENV=pypy-1.7.5-nocover
 before_install:
   - python --version
   - uname -a
